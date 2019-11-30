@@ -1,0 +1,37 @@
+From bfae7b9df51d4c6e6954bd795a145dc61d0ecaaa Mon Sep 17 00:00:00 2001
+From: Surge Raval <Surge1223@gmail.com>
+Date: Wed, 9 Oct 2019 07:54:58 +0200
+Subject: [PATCH] Make GetDeviceLockStatus() favor unlocked devices
+
+In order to pass SafeyNet and to be able to operate the
+device normally while being unlocked, /proc/cmdline may be
+altered but is never usually blocked. Having the method favor
+unlocked devices, gives the best outcome.
+
+Change-Id: I59429b8e6dca8639419ddbdd332e814e99b3124e
+---
+ fastboot/device/utility.cpp | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/fastboot/device/utility.cpp b/fastboot/device/utility.cpp
+index 2ebd57d12..cfe0232c1 100644
+--- a/fastboot/device/utility.cpp
++++ b/fastboot/device/utility.cpp
+@@ -194,10 +194,13 @@ std::vector<std::string> ListPartitions(FastbootDevice* device) {
+ bool GetDeviceLockStatus() {
+     std::string cmdline;
+     // Return lock status true if unable to read kernel command line.
+-    if (!android::base::ReadFileToString("/proc/cmdline", &cmdline)) {
+-        return true;
+-    }
+-    return cmdline.find("androidboot.verifiedbootstate=orange") == std::string::npos;
++     if (!android::base::ReadFileToString("/proc/cmdline", &cmdline)) {
++         return true;
++     }
++     if (android::base::GetProperty("ro.boot.vbmeta.device_state", "") != "locked") {
++         return false;
++     }
++     return cmdline.find("androidboot.verifiedbootstate=orange") == std::string::npos;
+ }
+ 
+ bool UpdateAllPartitionMetadata(FastbootDevice* device, const std::string& super_name,
