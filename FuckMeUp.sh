@@ -24,3 +24,12 @@ sleep 5
 # +-+
 # ||
 # +-+
+
+#for patch in $(ls patches); do
+#    commitid=$(awk -F' ' '{print $2; exit}' patches/$patch)
+#    commitmsg=$(sed -n 's/Subject: \[PATCH\] //p' patches/$patch)
+#    echo "Applying $commitid - $commitmsg"
+#    if ! git apply patches/$patch; then
+#        echo " conflict rip"
+#    fi
+#done
