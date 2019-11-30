@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-CYAN='\033[0;36m' # Change text to Cyan
-NC='\033[0m' # Remove colouring
+CYAN='\033[0;36m' # Change text to Cyan.
+NC='\033[0m' # Remove colouring.
+
+# Execute this in the root folder of the ROM you have synced.
 
 # Started working on this: Saturday 30th of November, 2019.
 
